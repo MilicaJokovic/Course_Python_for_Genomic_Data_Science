@@ -1,12 +1,12 @@
-class final_project ():
+class final_project():
 
     #The function transforms the input file to a dictionary where the key is the header and the value is the sequence
-    def __init__(self,file_name):
-        self.file_name = ("C:/Users/Milica Jokovic/Documents/Project/dna2.fasta")
+    def __init__(self,dna2fasta):
+        self.dna2fasta = dna2fasta
         self.dict = {}
-        frame_reader = open (self.file_name)
+        frame_reader = open (self.dna2fasta)
         for line in frame_reader:
-            line = line.split("\n")
+            line = line.strip("\n")
             if ">" in line:
                 header = line
                 self.dict[header] = ""
@@ -15,13 +15,13 @@ class final_project ():
         frame_reader.close()
     
     #The function is counting number of records in the file
-    def count_records(self):
+    def records_count(self):
         number_of_records = len(self.dict)
-        print("How many records are in the multi-FASTA file: %d \n", number_of_records) #Question1: How many records are in the multi-FASTA file?
+        print("How many records are in the multi-FASTA file: %d \n"% number_of_records) #Question1: How many records are in the multi-FASTA file?
         return number_of_records
 
     #The function is checking lenght of the each record and adequate header of the record
-    def check_lenght(self):
+    def records_lenght(self):
         lenght_dict = {}
         for key,value in self.dict.items():
             lenght_dict[key] = len(value)
@@ -35,27 +35,14 @@ class final_project ():
         find_min_seq_lenght = [l for l in lenght_dict if lenght_dict[l] == min_seq_lenght]
 
         #Question2 and Question 3: What is the length of the longest/shortest sequence in the file?
-        print ("The lenght of the longest senquence is: %d \n", max_seq_lenght & "The indentifier of the longest sequence is: %d \n", find_max_seq_lenght)
-        print ("The lenght of the shortest senquence is: %d \n", min_seq_lenght & "The indentifier of the shortest sequence is: %d \n", find_min_seq_lenght)
+        print ("The lenght of the longest senquence is: %d \n"% max_seq_lenght, 
+               "The indentifier of the longest sequence is: %d \n"% len(find_max_seq_lenght))
+        print ("The lenght of the shortest senquence is: %d \n"% min_seq_lenght,
+                "The indentifier of the shortest sequence is: %d \n"%len(find_min_seq_lenght))
         return lenght_dict
 
-    #def start_pos(sequence,n):
-    #    start_position = n-1
-     #   start_index = []
-      #  stop_index =[]
-       # for i in range(n-1,len(sequence),3):
-        #    if sequence [i:i+3]== "ATG":
-         #       start_index.append(i)
-
-        #for i in range(n-1,len(sequence),3):
-         #   stop_code = ["TAA","TGA","TAG"]
-          #  if sequence [i:i+3] in stop_code:
-           #     stop_index.append(i)
-        #position = [start_position,start_index,stop_index]
-        #return position
-
     #The function is finding start position and length for each read frame for a given sequence (dna: sequence, string)   
-    def find_pos(self, dna):
+    def find_position(self, dna):
        
         start_code = "ATG"
         stop_codes = ["TAA", "TAG", "TGA"]
@@ -115,14 +102,14 @@ class final_project ():
     def orf_identifier (self):
         orf = {}
         for header, dna_seq in self.dict.items(): 
-            pos = self.find_pos(dna_seq)
+            pos = self.find_position(dna_seq)
             orf[header] = pos
         # finding the header for Question7:
         id_key = [key for key in orf if "gi|142022655|gb|EQ086233.1|16" in key]
         idx = id_key[0]
 
         # finding the list of the frames for Question4-7:  
-        frame1, frame2, frame3, all_frames, id_frames = [], [], [], []
+        frame1, frame2, frame3, all_frames, id_frames = [], [], [], [], []
         for key, dict_value in orf.items():
             frame1 += dict_value["frame1"]
             frame2 += dict_value["frame2"]
@@ -152,7 +139,7 @@ class final_project ():
         return orf
 
     #The function is finding and counting repeats for each dna sequence; dna: sequence, string; n: number of repeats, int
-    def find_repeats(self, dna, n):
+    def repeats_finder(self, dna, n):
         
         repeats = {}
         for i in range(0, len(dna)):
@@ -169,7 +156,7 @@ class final_project ():
          
         repeats_set = {}
         for header, dna_seq in self.dict.items():
-            repeats = self.find_repeats(dna_seq, n)
+            repeats = self.repeats_finder(dna_seq, n)
             repeats_set[header] = repeats 
        
         combined_repeats = {}
@@ -194,12 +181,16 @@ class final_project ():
 
         #Question10: Which one of the following repeats of the lenght 7 has a maximum number of occurrences? 
         if n == 7:
+            most_freq_7 = max (combined_repeats.values())
             most_freq_7_seq = [key for key in combined_repeats if \
                        combined_repeats[key] == max(combined_repeats.values())]
-            print("Q10: The following repeats occured most frequently: \n", most_freq_7_seq)
+            print("Q10: The following repeats occured most frequently: \n"% most_freq_7_seq)
 
-
-
-
-
+x = final_project("C:/Users/Milica Jokovic/Documents/Course_Python_for_Genomic_Data_Science/dna2.fasta")
+lenght = x.records_lenght()
+records = x.records_count()
+orf = x.orf_identifier()
+rep6 = x.repeats_identifier(6)
+rep12 = x.repeats_identifier(12)
+rep7 = x.repeats_identifier(7)
 
